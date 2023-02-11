@@ -20,7 +20,7 @@ So instead of this:
 ```python
 if __name__ == "__main__":
 
-    getMostPlayed(id, count, client_id, client_secret)
+    getMostPlayed(id, client_id, client_secret, count)
     downloadMaps(osudbPath, downloadPath)
 ```
 
@@ -28,7 +28,7 @@ It should look something like this:
 ```python
 if __name__ == "__main__":
 
-    getMostPlayed(2, 100, your client id, "your client secret")
+    getMostPlayed(2, your client id, "your client secret", 100)
     downloadMaps("C:\\Users\\[your user]\\AppData\\Local\\osu!\\osu!.db", "C:\\Users\\[your user]\\AppData\\Local\\osu!\\Songs\\")
 ```
 
