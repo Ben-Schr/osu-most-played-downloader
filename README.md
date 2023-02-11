@@ -24,7 +24,7 @@ if __name__ == "__main__":
     downloadMaps(osudbPath, downloadPath)
 ```
 
-It should look something like this:
+The last few lines of code should look something like this:
 ```python
 if __name__ == "__main__":
 
