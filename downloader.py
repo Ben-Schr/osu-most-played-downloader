@@ -115,7 +115,7 @@ def downloadMaps(osudbFile, downloadPath : str) -> None:
 
 if __name__ == "__main__":
 
-    getMostPlayed(id, count, client_id, client_secret)
+    getMostPlayed(id, client_id, client_secret, count)
     downloadMaps(osudbPath, downloadPath)
 
 
