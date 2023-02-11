@@ -4,7 +4,12 @@ A quickly thrown-together tool for downloading a user's most played maps on osu.
 
 ### Getting started
 
-Simply install the required modules using `pip install -r requirements.txt` from the project folder.
+Simply install the required modules using `pip install -r requirements.txt` from the project folder.<br />
+To navigate to your project folder you can either copy the path into the command line like so:
+```
+cd [path to project folder]
+```
+Or you can enter the command line by typing `cmd` in the address line of your file explorer while inside the project directory.
 
 ### Usage
 
