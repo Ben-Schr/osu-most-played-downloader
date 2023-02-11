@@ -1,6 +1,6 @@
 import requests
 import numpy as np
-from osdbParser import readHeader, readBeatmap
+from osudbParser import readHeader, readBeatmap
 
 def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : int = 100) -> None:
     API_URL = 'https://osu.ppy.sh/api/v2'
