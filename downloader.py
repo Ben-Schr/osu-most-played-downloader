@@ -35,6 +35,8 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
     for i in range(0, count, 100):
         params['offset'] = i
         params['limit'] = i+100
+        if count - i < 100:
+            params['limit'] = i+count-i
         response = session.get(f'{API_URL}/users/{playerID}/beatmapsets/most_played', params=params, headers=headers).json()
 
         for counter, resp in enumerate(response):
@@ -78,7 +80,6 @@ def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[i
 
 def parseHashFromOsuDB(file) -> np.ndarray:
     header = readHeader(file)
-    print(header)
     size = header[5]
     hashs = np.empty(size, np.dtype("<S32"))
     for i in range(size):
