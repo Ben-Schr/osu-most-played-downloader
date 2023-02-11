@@ -1,4 +1,4 @@
-# eminence-in-shadow-osu-professional-profile-stalker-and-downloader-of-not-owned-most-played-maps
+# osu most played downloader
 A quickly thrown-together tool for downloading a user's most played maps on osu.
 
 
