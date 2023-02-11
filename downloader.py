@@ -12,9 +12,8 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
             'grant_type': 'client_credentials',
             'scope': 'public'
         }
-
+        
         response = requests.post(TOKEN_URL, data=data)
-
         return response.json().get('access_token')
 
     token = get_token()
@@ -37,6 +36,7 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
         params['limit'] = i+100
         if count - i < 100:
             params['limit'] = i+count-i
+
         response = session.get(f'{API_URL}/users/{playerID}/beatmapsets/most_played', params=params, headers=headers).json()
 
         for counter, resp in enumerate(response):
@@ -47,7 +47,10 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
     beatmap = np.empty(count, dtype=datatype)
     mapC = 0
     i = 0
-    while i < idArray.size // 50:
+    arraySize = idArray.size // 50
+    if arraySize == 0:
+        arraySize = 50
+    while i < arraySize:
 
         mapCounter = i * 50 + 50
         
@@ -109,7 +112,7 @@ def downloadMaps(osudbFile, downloadPath : str) -> None:
     for hash, id in ids:
         if np.where(hash == hashs)[0].size or id in downloadedIDs:
             continue
-
+        
         downloadBeatmapSet(id, session, forbidden, downloadPath)
         downloadedIDs.append(id)
 
