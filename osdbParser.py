@@ -1,5 +1,4 @@
 import struct
-from pprint import pprint
 
 def readLEB128(f):
     integer = 0
@@ -7,10 +6,8 @@ def readLEB128(f):
     while (b := f.read(1)):
         b = b[0]
         if b >> 7:
-            #integer = (integer << 7) + (b & 0b01111111)
             integer = integer + ((b & 0x7f) << (i * 7))
         else:
-            #integer = (integer << 7) + (b & 0b01111111)
             integer = integer + ((b & 0x7f) << (i * 7))
             break
         i += 1
@@ -25,7 +22,6 @@ def readString(f):
     return []
 
 def readHeader(f):
-    '''Reads the header of the osu!.db file. The format is as follows: osu! version, FolderCount, AccountUnlocked, duration to unlock, PlayerName, MapCount'''
     a = list(struct.unpack("<II?Q", f.read(17)))
     a.append(readString(f))
     b = struct.unpack("<I", f.read(4))[0]
@@ -69,9 +65,7 @@ def readIntDoublePairs(f):
     pairs = [[],[],[],[]]
     for mode in range(4):
         counter = f.read(4)[0]
-        # if counter == 0:
-        #     f.read(8)
-        # else:
+
         pairs[mode].append(readIntDoublePair(f, counter))
     return pairs
 
@@ -83,23 +77,3 @@ def readIntDoublePair(f, amount):
         pairs.append(a)
 
     return pairs
-    
-if __name__ == "__main__":
-
-    f = open(r"C:\Users\Strah\AppData\Local\osu!\osu!.db", 'rb')
-
-    header = readHeader(f)
-    pprint(header)
-    prev = 0
-    for i in range(header[-1]):
-        a = readBeatmap(f)
-        pprint(a)
-        break
-        # print(i)
-        # print(f.tell())
-        if not a[0]:
-            pprint(prev)
-            break
-        prev = a
-
-    f.close()
