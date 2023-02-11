@@ -66,13 +66,13 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
     np.save("beatmaps.npy", beatmap)
 
 
-def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[int, int | None]) -> None:
+def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[int, int | None], downloadPath : str) -> None:
     mapFile = session.get(f"https://api.chimu.moe/v1/download/{setID}").content
     mapName = session.get(f"https://api.chimu.moe/v1/set/{setID}").json()
 
     mapName = f'{mapName.get("SetId")} {mapName.get("Artist")} - {mapName.get("Title")}'.translate(forbidden)
 
-    with open(f"Songs/{mapName}.osz", "wb") as f:
+    with open(f"{downloadPath}{mapName}.osz", "wb") as f:
         f.write(mapFile)
 
 
@@ -95,7 +95,7 @@ def parseHashId(file = "beatmaps.npy") -> np.ndarray:
     return data
 
 
-def downloadMaps(osudbFile) -> None:
+def downloadMaps(osudbFile, downloadPath : str) -> None:
 
     with open(osudbFile, "rb") as osudbFile:
         hashs = parseHashFromOsuDB(osudbFile)
@@ -104,22 +104,18 @@ def downloadMaps(osudbFile) -> None:
 
     forbidden = str.maketrans("<>:\"/\\|?*", "_________")
     session = requests.session()
-    c = 0
     downloadedIDs = []
     for hash, id in ids:
         if np.where(hash == hashs)[0].size or id in downloadedIDs:
-            print(f"know {hash} {id}")
-            c += 1
-            print(c)
             continue
 
-        downloadBeatmapSet(id, session, forbidden)
+        downloadBeatmapSet(id, session, forbidden, downloadPath)
         downloadedIDs.append(id)
 
 
 if __name__ == "__main__":
 
     getMostPlayed(id, count, client_id, client_secret)
-    downloadMaps(path)
+    downloadMaps(osudbPath, downloadPath)
 
 
