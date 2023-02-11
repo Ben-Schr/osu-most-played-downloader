@@ -14,7 +14,7 @@ To use this simply change the placeholder arguments in `downloader.py` to your o
 `count` should be changed to the amount of beatmaps you want to download.<br />
 `client_id` and `client_secret` should be changed to the corresponding data from the osu! api.<br />
 `osudbPath` should be changed to the path to your `osu!.db` file.<br />
-`donwloadPath` should be chnaged to the path you want your maps to be downloaded to.<br />
+`donwloadPath` should be changed to the path you want your maps to be downloaded to.<br />
 
 So instead of this:
 ```python
