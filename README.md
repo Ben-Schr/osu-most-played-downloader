@@ -37,6 +37,6 @@ if __name__ == "__main__":
     downloadMaps("C:\\Users\\[your user]\\AppData\\Local\\osu!\\osu!.db", "C:\\Users\\[your user]\\AppData\\Local\\osu!\\Songs\\")
 ```
 
-## Getting api credentials
+### Getting api credentials
 
 To get a `client_id` and `client_secret`, you must create an OAuth-Application on your profile. To do this simply navigate to your profile settings on the osu! website, scroll all the way down and click the `new OAuth-Application` button. Then simply enter a name and register the application. Now you can press the edit button and see both your secret and id. 
