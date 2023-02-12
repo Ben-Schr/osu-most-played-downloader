@@ -13,7 +13,8 @@ Or you can enter the command line by typing `cmd` in the address line of your fi
 
 ### Usage
 
-To use this simply change the placeholder arguments in `downloader.py` to your own and run the file.
+To use this simply change the placeholder arguments in `downloader.py` to your own and run the file.<br />
+Note that to run this file you will have to install python and type `python downloader.py` in your command line, or run it from an IDE of your choice.
 
 `id` should be changed to the users id.<br />
 `count` should be changed to the amount of beatmaps you want to download.<br />
