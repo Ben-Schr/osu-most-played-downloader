@@ -1,6 +1,7 @@
 import requests
 import numpy as np
 from osudbParser import readHeader, readBeatmap
+import re
 
 def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : int = 100) -> None:
     API_URL = 'https://osu.ppy.sh/api/v2'
@@ -71,14 +72,18 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
     np.save("beatmaps.npy", beatmap)
 
 
-def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[int, int | None], downloadPath : str) -> None:
-    mapFile = session.get(f"https://api.chimu.moe/v1/download/{setID}").content
-    mapName = session.get(f"https://api.chimu.moe/v1/set/{setID}").json()
+def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[int, int], downloadPath : str) -> None:
+    response = session.get(f"https://catboy.best/d/{setID}")
+    content_disposition = response.headers['Content-Disposition']
+    filename = re.findall('filename="(.+)"', content_disposition)
 
-    mapName = f'{mapName.get("SetId")} {mapName.get("Artist")} - {mapName.get("Title")}'.translate(forbidden)
+    if len(filename) != 0:
+        filename = filename[0].replace("%20", " ")
+    else:
+        filename = str(setID)
 
-    with open(f"{downloadPath}{mapName}.osz", "wb") as f:
-        f.write(mapFile)
+    with open(f"{downloadPath}/{filename}", "wb") as f:
+        f.write(response.content)
 
 
 def parseHashFromOsuDB(file) -> np.ndarray:
