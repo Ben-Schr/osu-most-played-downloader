@@ -2,6 +2,9 @@ import requests
 import numpy as np
 from osudbParser import readHeader, readBeatmap
 import re
+from urllib import parse
+import argparse
+from json import load
 
 def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : int = 100) -> None:
     API_URL = 'https://osu.ppy.sh/api/v2'
@@ -68,8 +71,7 @@ def getMostPlayed(playerID : int, client_id : int, client_secret : str, count : 
 
         i += 1
 
-
-    np.save("beatmaps.npy", beatmap)
+    return beatmap
 
 
 def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[int, int], downloadPath : str) -> None:
@@ -78,7 +80,7 @@ def downloadBeatmapSet(setID: int, session: requests.session, forbidden : dict[i
     filename = re.findall('filename="(.+)"', content_disposition)
 
     if len(filename) != 0:
-        filename = filename[0].replace("%20", " ")
+        filename = parse.unquote(filename[0]).translate(forbidden)
     else:
         filename = str(setID)
 
@@ -94,37 +96,63 @@ def parseHashFromOsuDB(file) -> np.ndarray:
         beatmap = readBeatmap(file)
         if beatmap[7]:
             hashs[i] = beatmap[7][1]
+
+    np.save("beatmaps.npy", hashs)
+
     return hashs
 
+def downloadMaps(osudbFile, downloadPath : str, beatMapIds, useCached = False) -> None:
 
-def parseHashId(file = "beatmaps.npy") -> np.ndarray:
-
-    data = np.load(file)
-
-    return data
-
-
-def downloadMaps(osudbFile, downloadPath : str) -> None:
-
-    with open(osudbFile, "rb") as osudbFile:
-        hashs = parseHashFromOsuDB(osudbFile)
-
-    ids = parseHashId()
+    if not useCached:
+        with open(osudbFile, "rb") as osudbFile:
+            hashs = parseHashFromOsuDB(osudbFile)
+    else:
+        try:
+            hashs = np.load("beatmaps.npy")
+        except:
+            print("No cached file found. Reloading...")
+            with open(osudbFile, "rb") as osudbFile:
+                hashs = parseHashFromOsuDB(osudbFile)
 
     forbidden = str.maketrans("<>:\"/\\|?*", "_________")
     session = requests.session()
     downloadedIDs = []
-    for hash, id in ids:
-        if np.where(hash == hashs)[0].size or id in downloadedIDs:
+    
+    for hash, id in beatMapIds:
+        if hash in hashs or id in downloadedIDs:
             continue
         
         downloadBeatmapSet(id, session, forbidden, downloadPath)
         downloadedIDs.append(id)
 
+def parseConfig(path):
+    with open(path, "r") as f:
+        data = load(f)
+
+    return data
+
+def setUpArgs():
+    parser = argparse.ArgumentParser(
+                    prog='osu! most played downloader',
+                    description='Downloads a players most played beatmaps given their ID.')
+    parser.add_argument("-c", "--use-cache", action="store_true", help="instead of reading the 'osu!.db' file the file 'beatmaps.npy' will be read for information on installed beatmaps. The 'osu!.db' file will be read if the file isn't present.")
+    parser.add_argument("-f", "--config-path", type=str, default="defaultConfig.json", help="path to the config with the users credentials and other information.")
+    parser.add_argument("-n", "--max-number", type=int, required=False, default=100, help="specifies how many of the users maps are to be downloaded.")
+
+    return parser.parse_args()
+
 
 if __name__ == "__main__":
+    useCached = False
+    
+    args = setUpArgs()
+    config = parseConfig(args.config_path)
 
-    getMostPlayed(id, client_id, client_secret, count)
-    downloadMaps(osudbPath, downloadPath)
+    beatmaps = getMostPlayed(config["user_id"], 
+                             config["client_id"],
+                             config["client_secret"],
+                             args.max_number)
+    downloadMaps(config["db_path"], 
+                 config["download_path"], beatmaps, args.use_cache)
 
 
